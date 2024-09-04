@@ -203,7 +203,7 @@ def scrape_all_products(start_page_url, num_pages=14):
             scrape_product_data, all_product_links))
 
     product_df = pd.DataFrame(all_product_data)
-    product_df.to_csv('AmazonLaptopsfrom1-15.csv', index=False)
+    product_df.to_csv('Amazonlabtop.csv', index=False)
 
 
 if __name__ == "__main__":

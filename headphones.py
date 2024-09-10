@@ -173,8 +173,8 @@ def scrape_page_products(page_url):
         driver.quit()
 
 
-def scrape_all_products(start_page_url, num_pages=3):
-    all_product_links = []
+def scrape_all_products(start_page_url, num_pages=4):
+    all_product_links = set()
     current_page_url = start_page_url
     page_number = 1  # Initialize page number
 
@@ -184,7 +184,7 @@ def scrape_all_products(start_page_url, num_pages=3):
         print("="*100)
 
         products, next_page = scrape_page_products(current_page_url)
-        all_product_links.extend(products)
+        all_product_links.update(products)
 
         # Print the number of product links found on the current page
         print(f"Page {page_number}: Found {len(products)} product links.")
@@ -203,7 +203,8 @@ def scrape_all_products(start_page_url, num_pages=3):
             scrape_product_data, all_product_links))
 
     product_df = pd.DataFrame(all_product_data)
-    product_df.to_csv('Headphones.csv', index=False)
+    product_df.to_csv(
+        r'C:\Users\Dell\Documents\python\Githup\Boda1515\Amazon_project\headphones-data\Headphones.csv', index=False)
 
 
 if __name__ == "__main__":

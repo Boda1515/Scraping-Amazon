@@ -12,6 +12,7 @@ from selenium.webdriver.chrome.options import Options
 import random
 import re
 import concurrent.futures
+from datetime import datetime
 
 # Set up Selenium WebDriver
 chrome_options = Options()
@@ -73,6 +74,9 @@ def scrape_product_data(product_url):
         row_price = Price_before_discount.get_text() if Price_before_discount else np.nan
 
         product_data = {
+            "date_column": datetime.today().strftime('%Y-%m-%d'),  # date of scraping
+            "site": "amazon_egy",
+            "category": "mobile phones",
             "Title": get_element_text(driver, By.ID, "productTitle"),
             "Rate": get_element_attribute(driver, By.CSS_SELECTOR, "span.a-icon-alt", "textContent").replace("out of 5 stars", "").strip(),
             "Price": get_element_text(driver, By.CSS_SELECTOR, "#corePriceDisplay_desktop_feature_div .a-price-whole", np.nan),
@@ -173,8 +177,8 @@ def scrape_page_products(page_url):
         driver.quit()
 
 
-def scrape_all_products(start_page_url, num_pages=20):
-    all_product_links = []
+def scrape_all_products(start_page_url, num_pages=15):
+    all_product_links = set()
     current_page_url = start_page_url
     page_number = 1  # Initialize page number
 
@@ -184,7 +188,7 @@ def scrape_all_products(start_page_url, num_pages=20):
         print("="*100)
 
         products, next_page = scrape_page_products(current_page_url)
-        all_product_links.extend(products)
+        all_product_links.update(products)
 
         # Print the number of product links found on the current page
         print(f"Page {page_number}: Found {len(products)} product links.")
@@ -203,12 +207,13 @@ def scrape_all_products(start_page_url, num_pages=20):
             scrape_product_data, all_product_links))
 
     product_df = pd.DataFrame(all_product_data)
-    product_df.to_csv('AmazonPhones.csv', index=False)
+    product_df.to_csv(
+        r'C:\Users\Dell\Documents\python\Githup\Boda1515\Amazon_project\phones-data\Phones_Page_1_15.csv', index=False)
 
 
 if __name__ == "__main__":
     start_time = time.time()  # Record the start time
-    page_url = "https://www.amazon.eg/-/en/s?i=electronics&rh=n%3A21832883031&s=popularity-rank&fs=true&page=31&language=en&qid=1725376949&ref=sr_pg_30"
+    page_url = "https://www.amazon.eg/-/en/s?i=electronics&rh=n%3A21832883031&s=popularity-rank&fs=true&language=en&qid=1725376952&ref=sr_pg_1"
     scrape_all_products(page_url)
     end_time = time.time()  # Record the end time
     elapsed_time = end_time - start_time  # Calculate elapsed time
